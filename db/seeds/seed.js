@@ -3,6 +3,12 @@ const seed = async (data) => {
   const { articleData, commentData, topicData, userData } = data;
   // 1. create tables
   await db.query(`
+    DROP TABLE IF EXISTS comments;
+    DROP TABLE IF EXISTS articles;
+    DROP TABLE IF EXISTS topics;
+    DROP TABLE IF EXISTS users;
+  `);
+  await db.query(`
     CREATE TABLE topics (
       slug VARCHAR(50) NOT NULL PRIMARY KEY,
       description VARCHAR(255) NOT NULL
