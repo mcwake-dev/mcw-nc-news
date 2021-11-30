@@ -2,6 +2,7 @@ const {
   selectArticle,
   selectArticles,
   updateArticle,
+  selectArticleComments,
 } = require("../models/articles.model");
 const { selectTopic } = require("../models/topics.model");
 
@@ -59,6 +60,21 @@ exports.patchArticle = async (req, res, next) => {
       res.status(200).send({ article });
     } else {
       next({ status: 404, msg: "Article not found" });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getArticleComments = async (req, res, next) => {
+  try {
+    const { article_id } = req.params;
+    const comments = await selectArticleComments(article_id);
+
+    if (comments.length > 0) {
+      res.status(200).send({ comments });
+    } else {
+      next({ status: 204, msg: "Articles: No comments found for article" });
     }
   } catch (err) {
     next(err);

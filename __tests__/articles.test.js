@@ -249,6 +249,32 @@ describe("GET /api/articles", () => {
 
 describe("GET /api/articles/:article_id/comments", () => {
   it("should return a list of comments for a valid article ID", () => {
-    return request(app).get("/api/");
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.comments.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  it("should return a 204 error for an article with no comments", () => {
+    return request(app).get("/api/articles/999/comments").expect(204);
+  });
+  it("should return a 400 error for invalid article ID", () => {
+    return request(app)
+      .get("/api/articles/:bob/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
   });
 });

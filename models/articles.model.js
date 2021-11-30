@@ -32,7 +32,7 @@ exports.selectArticles = async (
   order = "desc",
   topic
 ) => {
-  let results, sort_by_query, order_query, topic_query;
+  let results, sort_by_query, order_query;
   const allowedSorts = [
     "title",
     "topic",
@@ -94,4 +94,17 @@ exports.updateArticle = async (article_id, inc_votes) => {
   );
 
   return results.rows[0];
+};
+
+exports.selectArticleComments = async (article_id) => {
+  const results = await db.query(
+    `
+            SELECT comments.* 
+            FROM comments 
+            WHERE article_id = $1;
+        `,
+    [article_id]
+  );
+
+  return results.rows;
 };
