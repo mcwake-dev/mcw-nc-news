@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const app = require("../app");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
+const articles = require("../db/data/test-data/articles");
 
 beforeAll(() => {
   return seed(testData);
@@ -101,5 +102,153 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/dave")
       .send({ inc_votes: "Wrongety Wrong Wrong" })
       .expect(400);
+  });
+});
+
+describe("GET /api/articles", () => {
+  it("should return a list of articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  describe("sort_by", () => {
+    it("should be able return a list of articles sorted by title", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("title", { descending: true });
+        });
+    });
+    it("should be able return a list of articles sorted by title", () => {
+      return request(app)
+        .get("/api/articles?sort_by=topic")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("topic", { descending: true });
+        });
+    });
+    it("should be able return a list of articles sorted by title", () => {
+      return request(app)
+        .get("/api/articles?sort_by=created_at")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+    it("should be able return a list of articles sorted by title", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("votes", { descending: true });
+        });
+    });
+    it("should be able return a list of articles sorted by comment count", () => {
+      return request(app)
+        .get("/api/articles?sort_by=comment_count")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toEqual(
+            body.articles.sort((a, b) => {
+              if (a.comment_count !== b.comment_count) {
+                return a.comment_count - b.comment_count;
+              } else {
+                return a.title.localeCompare(b.title);
+              }
+            })
+          );
+        });
+    });
+    it("should throw an error if an invalid sort parameter is passed", () => {
+      return request(app)
+        .get("/api/articles?sort_by=bananas")
+        .expect(400)
+        .then(({ body }) =>
+          expect(body.msg).toEqual("Articles: Invalid sort parameter")
+        );
+    });
+  });
+  describe("order", () => {
+    it("should sort articles in descending order by default", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+    it("should sort articles in descending order when requested", () => {
+      return request(app)
+        .get("/api/articles?sort=desc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+    it("should sort articles in ascending order when requested", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toBeSortedBy("created_at", {
+            ascending: true,
+          });
+        });
+    });
+    it("should throw an error if an invalid sort order parameter is passed", () => {
+      return request(app)
+        .get("/api/articles?order=bizarre")
+        .expect(400)
+        .then(({ body }) =>
+          expect(body.msg).toEqual("Articles: Invalid sort order parameter")
+        );
+    });
+  });
+  describe("topic", () => {
+    it("should return a list of articles filtered by topic", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          body.articles.every((article) => article.topic === "cats");
+        });
+    });
+    it("should return an error if the topic provided does not exist", () => {
+      return request(app)
+        .get("/api/articles?topic=fweljkfaweljkfawejlkafwe")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Articles: Invalid topic");
+        });
+    });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  it("should return a list of comments for a valid article ID", () => {
+    return request(app).get("/api/");
   });
 });
