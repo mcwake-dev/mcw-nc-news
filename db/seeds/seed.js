@@ -1,6 +1,6 @@
 const db = require("../connection");
 const format = require("pg-format");
-const seed = async (data) => {
+const seed = async (data, leaveEmpty) => {
   const { articleData, commentData, topicData, userData } = data;
   // 1. create tables
   await db.query(`
@@ -15,14 +15,6 @@ const seed = async (data) => {
       description VARCHAR(255) NOT NULL
     );
   `);
-  await db.query(
-    format(
-      `
-      INSERT INTO topics (slug, description) VALUES %L RETURNING slug, description;
-    `,
-      topicData.map(({ slug, description }) => [slug, description])
-    )
-  );
   await db.query(`
     CREATE TABLE users (
       username VARCHAR(50) NOT NULL PRIMARY KEY,
@@ -30,20 +22,8 @@ const seed = async (data) => {
       name VARCHAR(100) NOT NULL
     );
   `);
-  await db.query(
-    format(
-      `
-        INSERT INTO users (username, avatar_url, name) VALUES %L RETURNING *;
-      `,
-      userData.map(({ username, avatar_url, name }) => [
-        username,
-        avatar_url,
-        name,
-      ])
-    )
-  );
+
   await db.query(`
-    DROP TABLE IF EXISTS articles;
     CREATE TABLE articles (
       article_id SERIAL PRIMARY KEY,
       title VARCHAR(255) NOT NULL,
@@ -56,21 +36,7 @@ const seed = async (data) => {
       FOREIGN KEY (author) REFERENCES users (username) ON DELETE CASCADE
     )
   `);
-  await db.query(
-    format(
-      `
-      INSERT INTO articles (title, body, topic, author, created_at, votes) VALUES %L RETURNING *;
-    `,
-      articleData.map(({ title, body, topic, author, created_at, votes }) => [
-        title,
-        body,
-        topic,
-        author,
-        created_at,
-        votes,
-      ])
-    )
-  );
+
   await db.query(`
     CREATE TABLE comments (
       comment_id SERIAL PRIMARY KEY,
@@ -83,20 +49,58 @@ const seed = async (data) => {
       FOREIGN KEY (article_id) REFERENCES articles(article_id) ON DELETE CASCADE
     )
   `);
-  await db.query(
-    format(
-      `
+
+  if (!leaveEmpty) {
+    await db.query(
+      format(
+        `
+      INSERT INTO topics (slug, description) VALUES %L RETURNING slug, description;
+    `,
+        topicData.map(({ slug, description }) => [slug, description])
+      )
+    );
+    await db.query(
+      format(
+        `
+        INSERT INTO users (username, avatar_url, name) VALUES %L RETURNING *;
+      `,
+        userData.map(({ username, avatar_url, name }) => [
+          username,
+          avatar_url,
+          name,
+        ])
+      )
+    );
+    await db.query(
+      format(
+        `
+      INSERT INTO articles (title, body, topic, author, created_at, votes) VALUES %L RETURNING *;
+    `,
+        articleData.map(({ title, body, topic, author, created_at, votes }) => [
+          title,
+          body,
+          topic,
+          author,
+          created_at,
+          votes,
+        ])
+      )
+    );
+    await db.query(
+      format(
+        `
       INSERT INTO comments (author, article_id, votes, created_at, body) VALUES %L RETURNING *;
     `,
-      commentData.map(({ author, article_id, votes, created_at, body }) => [
-        author,
-        article_id,
-        votes,
-        created_at,
-        body,
-      ])
-    )
-  );
+        commentData.map(({ author, article_id, votes, created_at, body }) => [
+          author,
+          article_id,
+          votes,
+          created_at,
+          body,
+        ])
+      )
+    );
+  }
 };
 
 module.exports = seed;
