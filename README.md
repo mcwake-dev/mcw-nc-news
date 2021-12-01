@@ -1,12 +1,10 @@
 # NC-News
 
-## Project demonstrating good practice for backend development in Node.js
-
-## By Matthew C Wake
+## Project demonstrating good practice for backend development in Node.js by Matthew C Wake
 
 # Hosting
 
-A live version of this project is hosted on Heroku at [https://mcw-nc-news.herokuapp.com](https://mcw-nc-news.herokuapp.com)
+A live version of this project is hosted on Heroku at [https://mcw-nc-news.herokuapp.com/api](https://mcw-nc-news.herokuapp.com/api)
 
 # Summary
 
