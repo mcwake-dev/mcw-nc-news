@@ -13,6 +13,16 @@ exports.endpoints = {
       users: [{ username: "dave" }, { username: "bob" }, { username: "brian" }],
     },
   },
+  "GET /api/users/:username": {
+    description: "Gets a single user with the given username",
+    exampleResponse: {
+      user: {
+        username: "dave",
+        avatar_url: "https://avatar.com/daves_avatar.jpg",
+        name: "Brian",
+      },
+    },
+  },
   "GET /api/articles/:article_id": {
     description: "Serves a single article for the given article ID",
     exampleResponse: {
