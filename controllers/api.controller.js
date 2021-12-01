@@ -6,6 +6,13 @@ exports.endpoints = {
       topics: [{ slug: "football", description: "Footie!" }],
     },
   },
+  "GET /api/users": {
+    description: "Serves array of all users",
+    queries: [],
+    exampleResponse: {
+      users: [{ username: "dave" }, { username: "bob" }, { username: "brian" }],
+    },
+  },
   "GET /api/articles/:article_id": {
     description: "Serves a single article for the given article ID",
     exampleResponse: {
