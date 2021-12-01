@@ -29,3 +29,28 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET /api/users/:username", () => {
+  it("should respond with a user when supplied with a valid existing username", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toEqual(
+          expect.objectContaining({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          })
+        );
+      });
+  });
+  it("should respond with a user when supplied with a valid existing username", () => {
+    return request(app)
+      .get("/api/users/sirnotappearinginthisapi")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Users: User not found");
+      });
+  });
+});
