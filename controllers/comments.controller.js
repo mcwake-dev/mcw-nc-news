@@ -5,7 +5,7 @@ exports.deleteComment = async (req, res, next) => {
   const deleteSuccessful = await deleteComment(comment_id);
 
   if (deleteSuccessful) {
-    res.send(204);
+    res.sendStatus(204);
   } else {
     next({ msg: "Invalid Comment ID", status: 400 });
   }
