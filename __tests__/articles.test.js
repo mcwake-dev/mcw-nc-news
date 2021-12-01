@@ -4,7 +4,6 @@ const db = require("../db/connection");
 const app = require("../app");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
-const articles = require("../db/data/test-data/articles");
 
 beforeAll(() => {
   return seed(testData);
@@ -261,6 +260,7 @@ describe("GET /api/articles/:article_id/comments", () => {
               created_at: expect.any(String),
               author: expect.any(String),
               body: expect.any(String),
+              article_id: expect.any(Number),
             })
           );
         });
