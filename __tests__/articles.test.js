@@ -278,3 +278,50 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  it("should create and return a new comment when passed a valid article ID, username and comment", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "butter_bridge", body: "A nice comment" })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            body: "A nice comment",
+            votes: 0,
+            author: "butter_bridge",
+            article_id: 1,
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+  it("should return a 400 error for invalid article ID", () => {
+    return request(app)
+      .post("/api/articles/:bob/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  it("should return an error when passed an invalid comment object (invalid keys)", () => {
+    return request(app)
+      .post("/api/articles/:bob/comments")
+      .send({ nanana: "sirnotappearinginthisapi", nernerner: "A nice comment" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  it("should return an error when passed an invalid username", () => {
+    return request(app)
+      .post("/api/articles/:bob/comments")
+      .send({ username: "sirnotappearinginthisapi", body: "A nice comment" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+});

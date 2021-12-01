@@ -5,10 +5,14 @@ const {
   getArticles,
   patchArticle,
   getArticleComments,
+  postArticleComment,
 } = require("../controllers/articles.controller");
 
 router.route("/").get(getArticles);
 router.route("/:article_id").get(getArticle).patch(patchArticle);
-router.route("/:article_id/comments").get(getArticleComments);
+router
+  .route("/:article_id/comments")
+  .get(getArticleComments)
+  .post(postArticleComment);
 
 module.exports = router;
