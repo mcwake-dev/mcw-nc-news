@@ -21,7 +21,7 @@ exports.selectArticle = async (article_id) => {
                 articles.created_at, 
                 articles.votes;
     `,
-    [article_id]
+    [article_id],
   );
 
   return results.rows[0];
@@ -30,9 +30,11 @@ exports.selectArticle = async (article_id) => {
 exports.selectArticles = async (
   sort_by = "created_at",
   order = "desc",
-  topic
+  topic = null,
 ) => {
-  let results, sort_by_query, order_query;
+  let results;
+  let sort_by_query;
+  let order_query;
   const allowedSorts = [
     "title",
     "topic",
@@ -45,13 +47,13 @@ exports.selectArticles = async (
   if (allowedSorts.includes(sort_by)) {
     sort_by_query = `ORDER BY ${sort_by}`;
   } else {
-    throw new Error(`Articles: Invalid sort parameter`);
+    throw new Error("Articles: Invalid sort parameter");
   }
 
   if (allowedSortOrder.includes(order)) {
     order_query = order;
   } else {
-    throw new Error(`Articles: Invalid sort order parameter`);
+    throw new Error("Articles: Invalid sort order parameter");
   }
 
   const baseQuery = `
@@ -64,7 +66,7 @@ exports.selectArticles = async (
         articles.votes, 
         COUNT(comment_id) AS comment_count
     FROM articles INNER JOIN comments on articles.article_id = comments.article_id
-    ${topic ? `WHERE topic = $1` : ""}
+    ${topic ? "WHERE topic = $1" : ""}
     GROUP BY articles.author, 
             articles.title, 
             articles.article_id, 
@@ -90,7 +92,7 @@ exports.updateArticle = async (article_id, inc_votes) => {
     `
         UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;
     `,
-    [inc_votes, article_id]
+    [inc_votes, article_id],
   );
 
   return results.rows[0];
@@ -103,7 +105,7 @@ exports.selectArticleComments = async (article_id) => {
             FROM comments 
             WHERE article_id = $1;
         `,
-    [article_id]
+    [article_id],
   );
 
   return results.rows;
@@ -114,7 +116,7 @@ exports.insertArticleComment = async (article_id, author, body) => {
     `
     INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *;
   `,
-    [article_id, author, body]
+    [article_id, author, body],
   );
 
   return results.rows[0];

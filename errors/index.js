@@ -10,7 +10,7 @@ exports.handlePsqlErrors = (err, req, res, next) => {
   } else next(err);
 };
 
-exports.handleServerErrors = (err, req, res, next) => {
+exports.handleServerErrors = (err, req, res) => {
   console.log(err);
 
   // This would be really, really bad to have running in production

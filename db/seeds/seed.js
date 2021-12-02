@@ -1,7 +1,10 @@
-const db = require("../connection");
 const format = require("pg-format");
+const db = require("../connection");
+
 const seed = async (data, leaveEmpty) => {
-  const { articleData, commentData, topicData, userData } = data;
+  const {
+    articleData, commentData, topicData, userData,
+  } = data;
   // 1. create tables
   await db.query(`
     DROP TABLE IF EXISTS comments;
@@ -62,8 +65,8 @@ const seed = async (data, leaveEmpty) => {
         `
           INSERT INTO topics (slug, description) VALUES %L RETURNING slug, description;
         `,
-        topicData.map(({ slug, description }) => [slug, description])
-      )
+        topicData.map(({ slug, description }) => [slug, description]),
+      ),
     );
     await db.query(
       format(
@@ -74,37 +77,41 @@ const seed = async (data, leaveEmpty) => {
           username,
           avatar_url,
           name,
-        ])
-      )
+        ]),
+      ),
     );
     await db.query(
       format(
         `
           INSERT INTO articles (title, body, topic, author, created_at, votes) VALUES %L RETURNING *;
         `,
-        articleData.map(({ title, body, topic, author, created_at, votes }) => [
+        articleData.map(({
+          title, body, topic, author, created_at, votes,
+        }) => [
           title,
           body,
           topic,
           author,
           created_at,
           votes,
-        ])
-      )
+        ]),
+      ),
     );
     await db.query(
       format(
         `
           INSERT INTO comments (author, article_id, votes, created_at, body) VALUES %L RETURNING *;
         `,
-        commentData.map(({ author, article_id, votes, created_at, body }) => [
+        commentData.map(({
+          author, article_id, votes, created_at, body,
+        }) => [
           author,
           article_id,
           votes,
           created_at,
           body,
-        ])
-      )
+        ]),
+      ),
     );
   }
 };
