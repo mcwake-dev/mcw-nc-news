@@ -13,7 +13,9 @@ exports.handlePsqlErrors = (err, req, res, next) => {
 exports.handleServerErrors = (err, req, res, next) => {
   console.log(err);
 
-  if (process.env.NODE_ENV !== "production") {
+  // This would be really, really bad to have running in production
+  // but is quite handy in development
+  if (process.env.NODE_ENV === "development") {
     console.log("PARAMS", req.params);
     console.log("QUERY", req.query);
     console.log("BODY", req.body);

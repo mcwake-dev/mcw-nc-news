@@ -6,10 +6,13 @@ const {
   handlePsqlErrors,
   handleServerErrors,
 } = require("./errors/index.js");
+const { getEndpoints } = require("./controllers/api.controller");
 
 const app = express();
 
 app.use(express.json());
+
+app.use(/^\/api$/, getEndpoints);
 app.use("/api", apiRouter);
 
 app.use(handleCustomErrors);

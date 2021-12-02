@@ -5,8 +5,14 @@ const seed = async (data, leaveEmpty) => {
   // 1. create tables
   await db.query(`
     DROP TABLE IF EXISTS comments;
+  `);
+  await db.query(`
     DROP TABLE IF EXISTS articles;
+  `);
+  await db.query(`
     DROP TABLE IF EXISTS topics;
+  `);
+  await db.query(`
     DROP TABLE IF EXISTS users;
   `);
   await db.query(`
@@ -54,16 +60,16 @@ const seed = async (data, leaveEmpty) => {
     await db.query(
       format(
         `
-      INSERT INTO topics (slug, description) VALUES %L RETURNING slug, description;
-    `,
+          INSERT INTO topics (slug, description) VALUES %L RETURNING slug, description;
+        `,
         topicData.map(({ slug, description }) => [slug, description])
       )
     );
     await db.query(
       format(
         `
-        INSERT INTO users (username, avatar_url, name) VALUES %L RETURNING *;
-      `,
+          INSERT INTO users (username, avatar_url, name) VALUES %L RETURNING *;
+        `,
         userData.map(({ username, avatar_url, name }) => [
           username,
           avatar_url,
@@ -74,8 +80,8 @@ const seed = async (data, leaveEmpty) => {
     await db.query(
       format(
         `
-      INSERT INTO articles (title, body, topic, author, created_at, votes) VALUES %L RETURNING *;
-    `,
+          INSERT INTO articles (title, body, topic, author, created_at, votes) VALUES %L RETURNING *;
+        `,
         articleData.map(({ title, body, topic, author, created_at, votes }) => [
           title,
           body,
@@ -89,8 +95,8 @@ const seed = async (data, leaveEmpty) => {
     await db.query(
       format(
         `
-      INSERT INTO comments (author, article_id, votes, created_at, body) VALUES %L RETURNING *;
-    `,
+          INSERT INTO comments (author, article_id, votes, created_at, body) VALUES %L RETURNING *;
+        `,
         commentData.map(({ author, article_id, votes, created_at, body }) => [
           author,
           article_id,
