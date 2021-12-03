@@ -312,3 +312,31 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send({ username: "sirnotappearinginthisapi", body: "A nice comment" })
       .expect(404));
 });
+
+describe("DELETE /api/articles/:article_id", () => {
+  it("should delete an article when supplied with a valid, existent article ID, returning a 204", () => {
+    return db
+      .query(
+        "INSERT INTO articles (title, topic, author, body, created_at, votes) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;",
+        [
+          "Living in the shadow of a great man",
+          "mitch",
+          "butter_bridge",
+          "I find this existence challenging",
+          new Date(1594329060000),
+          100,
+        ]
+      )
+      .then((result) => {
+        const articleToDelete = result.rows[0];
+
+        return request(app)
+          .delete(`/api/articles/${articleToDelete.article_id}`)
+          .expect(204);
+      });
+  });
+  it("should return a 404 error if the article ID does not exist", () =>
+    request(app).delete(`/api/articles/9999`).expect(404));
+  it("should return a 400 error if an invalid article ID is supplied", () =>
+    request(app).delete(`/api/articles/:blablabla`).expect(400));
+});

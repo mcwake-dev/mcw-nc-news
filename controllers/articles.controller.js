@@ -4,6 +4,7 @@ const {
   updateArticle,
   selectArticleComments,
   insertArticleComment,
+  deleteArticle,
 } = require("../models/articles.model");
 const { selectTopic } = require("../models/topics.model");
 const { selectUser } = require("../models/users.model");
@@ -123,6 +124,21 @@ exports.postArticleComment = async (req, res, next) => {
       } else {
         next({ status: 400, msg: "Missing username or body for comment" });
       }
+    } else {
+      next({ status: 404, msg: "Article not found" });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteArticle = async (req, res, next) => {
+  try {
+    const { article_id } = req.params;
+    const articleDeleted = await deleteArticle(article_id);
+
+    if (articleDeleted) {
+      res.sendStatus(204);
     } else {
       next({ status: 404, msg: "Article not found" });
     }

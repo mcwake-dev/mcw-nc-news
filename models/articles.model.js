@@ -83,3 +83,14 @@ exports.insertArticleComment = async (article_id, author, body) => {
 
   return results.rows[0];
 };
+
+exports.deleteArticle = async (article_id) => {
+  const result = await db.query(
+    `
+      DELETE FROM articles WHERE article_id = $1;
+    `,
+    [article_id]
+  );
+
+  return result.rowCount === 1;
+};
