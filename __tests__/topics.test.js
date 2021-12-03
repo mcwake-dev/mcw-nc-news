@@ -29,3 +29,27 @@ describe("GET /api/topics", () => {
         });
       }));
 });
+
+describe("POST /api/topics", () => {
+  it("should create and return a new topic when supplied with a new slug and description", () =>
+    request(app)
+      .post("/api/topics")
+      .send({ slug: "new-topic", description: "test topic" })
+      .expect(201)
+      .then(({ body: { topic } }) =>
+        expect(topic).toEqual({
+          slug: "new-topic",
+          description: "test topic",
+        })
+      ));
+  it("should return a 400 error if the slug is missing", () =>
+    request(app)
+      .post("/api/topics")
+      .send({ bob: "Brian", description: "A description" })
+      .expect(400));
+  it("should return a 400 error if the description is missing", () =>
+    request(app)
+      .post("/api/topics")
+      .send({ slug: "test-topic-2", dave: "Test topic 2" })
+      .expect(400));
+});
