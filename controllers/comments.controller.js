@@ -26,7 +26,7 @@ exports.voteOnComment = async (req, res, next) => {
       if (comment) {
         res.status(200).send({ comment });
       } else {
-        res.sendStatus(404);
+        next({ status: 404, msg: "Comment not found" });
       }
     } else {
       res.sendStatus(200);

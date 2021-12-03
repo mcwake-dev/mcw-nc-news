@@ -6,11 +6,12 @@ const {
   getArticles,
   patchArticle,
   deleteArticle,
+  postArticle,
   getArticleComments,
   postArticleComment,
 } = require("../controllers/articles.controller");
 
-router.route("/").get(getArticles);
+router.route("/").get(getArticles).post(postArticle);
 router
   .route("/:article_id")
   .get(getArticle)

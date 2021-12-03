@@ -5,9 +5,17 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
-  if (err.code === "22P02") {
-    res.status(400).send({ msg: "Invalid input" });
-  } else next(err);
+  switch (err.code) {
+    case "22P02":
+      res.status(400).send({ msg: "Invalid input" });
+      break;
+    case "23503":
+      res.status(404).send({ msg: "Not Found" });
+      break;
+    default:
+      next(err);
+      break;
+  }
 };
 
 exports.handleServerErrors = (err, req, res) => {

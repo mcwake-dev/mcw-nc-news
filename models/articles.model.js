@@ -94,3 +94,14 @@ exports.deleteArticle = async (article_id) => {
 
   return result.rowCount === 1;
 };
+
+exports.insertArticle = async (author, title, body, topic) => {
+  const result = await db.query(
+    `
+    INSERT INTO articles (author, title, body, topic) VALUES ($1, $2, $3, $4) RETURNING *;
+  `,
+    [author, title, body, topic]
+  );
+
+  return result.rows[0];
+};

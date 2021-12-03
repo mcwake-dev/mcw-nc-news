@@ -5,6 +5,7 @@ const {
   selectArticleComments,
   insertArticleComment,
   deleteArticle,
+  insertArticle,
 } = require("../models/articles.model");
 const { selectTopic } = require("../models/topics.model");
 const { selectUser } = require("../models/users.model");
@@ -104,28 +105,12 @@ exports.postArticleComment = async (req, res, next) => {
   try {
     const { article_id } = req.params;
     const { username, body } = req.body;
-    const articleExists = await selectArticle(article_id);
+    if (username && body) {
+      const comment = await insertArticleComment(article_id, username, body);
 
-    if (articleExists) {
-      if (username && body) {
-        const userExists = await selectUser(username);
-
-        if (!userExists) {
-          next({ status: 404, msg: "User not found" });
-        } else {
-          const comment = await insertArticleComment(
-            article_id,
-            username,
-            body
-          );
-
-          res.status(201).send({ comment });
-        }
-      } else {
-        next({ status: 400, msg: "Missing username or body for comment" });
-      }
+      res.status(201).send({ comment });
     } else {
-      next({ status: 404, msg: "Article not found" });
+      next({ status: 400, msg: "Missing username or body for comment" });
     }
   } catch (err) {
     next(err);
@@ -143,6 +128,23 @@ exports.deleteArticle = async (req, res, next) => {
       next({ status: 404, msg: "Article not found" });
     }
   } catch (err) {
+    next(err);
+  }
+};
+
+exports.postArticle = async (req, res, next) => {
+  try {
+    const { author, title, body, topic } = req.body;
+
+    if (author && title && body && topic) {
+      const article = await insertArticle(author, title, body, topic);
+
+      res.status(201).send({ article });
+    } else {
+      next({ status: 400, msg: "Missing required parameters" });
+    }
+  } catch (err) {
+    console.log(err);
     next(err);
   }
 };

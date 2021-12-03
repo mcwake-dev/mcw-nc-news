@@ -1,4 +1,11 @@
-const { expect, it, describe, beforeAll, afterAll } = require("@jest/globals");
+const {
+  expect,
+  it,
+  describe,
+  beforeAll,
+  afterAll,
+  test,
+} = require("@jest/globals");
 const request = require("supertest");
 const db = require("../db/connection");
 const app = require("../app");
@@ -297,7 +304,9 @@ describe("POST /api/articles/:article_id/comments", () => {
     request(app)
       .post("/api/articles/:bob/comments")
       .expect(400)
-      .then(({ body }) => expect(body.msg).toBe("Invalid input")));
+      .then(({ body }) =>
+        expect(body.msg).toBe("Missing username or body for comment")
+      ));
   it("should return an error when passed an invalid comment object (invalid keys)", () =>
     request(app)
       .post("/api/articles/1/comments")
@@ -339,4 +348,57 @@ describe("DELETE /api/articles/:article_id", () => {
     request(app).delete(`/api/articles/9999`).expect(404));
   it("should return a 400 error if an invalid article ID is supplied", () =>
     request(app).delete(`/api/articles/:blablabla`).expect(400));
+});
+
+describe("POST /api/articles", () => {
+  test("should return a new article and a 201 when passed a valid new article object", () =>
+    request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "A nice title",
+        body: "A nice body (for an article)",
+        topic: "cats",
+      })
+      .expect(201)
+      .then(({ body: { article } }) =>
+        expect(article).toEqual({
+          article_id: expect.any(Number),
+          author: "icellusedkars",
+          title: "A nice title",
+          body: "A nice body (for an article)",
+          topic: "cats",
+          created_at: expect.any(String),
+          votes: 0,
+        })
+      ));
+  test("should return a 400 error if required parameters are missing", () =>
+    request(app)
+      .post("/api/articles")
+      .send({
+        title: "A nice title",
+        body: "A nice body (for an article)",
+        topic: "cats",
+      })
+      .expect(400));
+  test("should return a 404 error if user does not exist", () =>
+    request(app)
+      .post("/api/articles")
+      .send({
+        author: "sirnotappearinginthisapi",
+        title: "A nice title",
+        body: "A nice body (for an article)",
+        topic: "cats",
+      })
+      .expect(404));
+  test("should return a 404 error if topic does not exist", () =>
+    request(app)
+      .post("/api/articles")
+      .send({
+        author: "sirnotappearinginthisapi",
+        title: "A nice title",
+        body: "A nice body (for an article)",
+        topic: "amagicalnonexistenttopic",
+      })
+      .expect(404));
 });
