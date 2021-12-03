@@ -6,6 +6,8 @@
 
 A live version of this project is hosted on Heroku at [https://mcw-nc-news.herokuapp.com/api](https://mcw-nc-news.herokuapp.com/api)
 
+[![Test > Deploy to Heroku](https://github.com/mcwake-dev/mcw-nc-news/actions/workflows/test-and-deploy.yml/badge.svg)](https://github.com/mcwake-dev/mcw-nc-news/actions/workflows/test-and-deploy.yml)
+
 # Summary
 
 This project is the capstone on the Backend module of the Northcoders Web Development Bootcamp. It has been implemented by me (Matthew C Wake) following a specification provided by Northcoders.
