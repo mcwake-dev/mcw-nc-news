@@ -20,6 +20,7 @@ This project is the capstone on the Backend module of the Northcoders Web Develo
 - MVC architecture
 - Interacting with a PostgreSQL database
 - REST API
+- CI/CD using Github Actions
 
 # Setup
 
@@ -117,4 +118,14 @@ To run all tests and ensure correct operation of the API, use the following comm
 
 ```
     npm test
+```
+
+# CI/CD on Heroku
+
+Should you wish to use the included Github Actions workflow to automate testing and deployment to Heroku, configure the following Secrets in your Settings on Github.com for your fork of this repository:
+
+```
+    HEROKU_API_KEY - Your api key from Heroku - you will need a Heroku account then this can be accessed from [https://dashboard.heroku.com/account](https://dashboard.heroku.com/account)
+    HEROKU_APP_NAME - Your unique app name on Heroku
+    HEROKU_EMAIL_ADDRESS - The email address associated with your Heroku account
 ```
