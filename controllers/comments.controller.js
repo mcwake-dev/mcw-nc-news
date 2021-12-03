@@ -19,12 +19,17 @@ exports.voteOnComment = async (req, res, next) => {
   try {
     const { comment_id } = req.params;
     const { inc_votes } = req.body;
-    const comment = await updateComment(comment_id, inc_votes);
 
-    if (comment) {
-      res.status(200).send({ comment });
+    if (comment_id && inc_votes) {
+      const comment = await updateComment(comment_id, inc_votes);
+
+      if (comment) {
+        res.status(200).send({ comment });
+      } else {
+        res.sendStatus(404);
+      }
     } else {
-      next({ msg: "Invalid Comment ID", status: 400 });
+      res.sendStatus(200);
     }
   } catch (err) {
     next(err);

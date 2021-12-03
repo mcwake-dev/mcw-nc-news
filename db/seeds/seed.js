@@ -2,9 +2,7 @@ const format = require("pg-format");
 const db = require("../connection");
 
 const seed = async (data, leaveEmpty) => {
-  const {
-    articleData, commentData, topicData, userData,
-  } = data;
+  const { articleData, commentData, topicData, userData } = data;
   // 1. create tables
   await db.query(`
     DROP TABLE IF EXISTS comments;
@@ -37,7 +35,7 @@ const seed = async (data, leaveEmpty) => {
       article_id SERIAL PRIMARY KEY,
       title VARCHAR(255) NOT NULL,
       body TEXT NOT NULL,
-      votes INT DEFAULT 0,
+      votes INT DEFAULT 0 NOT NULL,
       topic VARCHAR(50) NOT NULL,
       author VARCHAR(50) NOT NULL,
       created_at TIMESTAMP DEFAULT now(),
@@ -51,7 +49,7 @@ const seed = async (data, leaveEmpty) => {
       comment_id SERIAL PRIMARY KEY,
       author VARCHAR(50) NOT NULL,
       article_id INT NOT NULL,
-      votes INT DEFAULT 0,
+      votes INT DEFAULT 0 NOT NULL,
       created_at TIMESTAMP DEFAULT now(),
       body TEXT NOT NULL,
       FOREIGN KEY (author) REFERENCES users(username) ON DELETE CASCADE,
@@ -65,8 +63,8 @@ const seed = async (data, leaveEmpty) => {
         `
           INSERT INTO topics (slug, description) VALUES %L RETURNING slug, description;
         `,
-        topicData.map(({ slug, description }) => [slug, description]),
-      ),
+        topicData.map(({ slug, description }) => [slug, description])
+      )
     );
     await db.query(
       format(
@@ -77,41 +75,37 @@ const seed = async (data, leaveEmpty) => {
           username,
           avatar_url,
           name,
-        ]),
-      ),
+        ])
+      )
     );
     await db.query(
       format(
         `
           INSERT INTO articles (title, body, topic, author, created_at, votes) VALUES %L RETURNING *;
         `,
-        articleData.map(({
-          title, body, topic, author, created_at, votes,
-        }) => [
+        articleData.map(({ title, body, topic, author, created_at, votes }) => [
           title,
           body,
           topic,
           author,
           created_at,
           votes,
-        ]),
-      ),
+        ])
+      )
     );
     await db.query(
       format(
         `
           INSERT INTO comments (author, article_id, votes, created_at, body) VALUES %L RETURNING *;
         `,
-        commentData.map(({
-          author, article_id, votes, created_at, body,
-        }) => [
+        commentData.map(({ author, article_id, votes, created_at, body }) => [
           author,
           article_id,
           votes,
           created_at,
           body,
-        ]),
-      ),
+        ])
+      )
     );
   }
 };
