@@ -29,7 +29,6 @@ const seed = async (data, leaveEmpty) => {
       name VARCHAR(100) NOT NULL
     );
   `);
-
   await db.query(`
     CREATE TABLE articles (
       article_id SERIAL PRIMARY KEY,
@@ -43,7 +42,6 @@ const seed = async (data, leaveEmpty) => {
       FOREIGN KEY (author) REFERENCES users (username) ON DELETE CASCADE
     )
   `);
-
   await db.query(`
     CREATE TABLE comments (
       comment_id SERIAL PRIMARY KEY,
