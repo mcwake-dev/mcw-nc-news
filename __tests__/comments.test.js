@@ -71,7 +71,7 @@ describe("PATCH /api/comments/:comment_id", () => {
     request(app)
       .patch("/api/comments/1")
       .send({ blahblahblah: 1 })
-      .expect(200)
+      .expect(400)
       .then(({ body }) => {
         expect(body).toEqual({});
       }));
