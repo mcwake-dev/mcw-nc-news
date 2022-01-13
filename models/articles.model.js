@@ -24,8 +24,10 @@ exports.selectArticle = async (article_id) => {
 exports.selectArticles = async (
   sort_by = "created_at",
   order = "desc",
-  topic = null
+  topic = null,
+  author = null
 ) => {
+  console.log(topic, author);
   const baseQuery = `
     SELECT articles.author, 
         articles.title, 
@@ -35,13 +37,18 @@ exports.selectArticles = async (
         articles.votes, 
         COUNT(comment_id) AS comment_count
     FROM articles LEFT JOIN comments on articles.article_id = comments.article_id
-    ${topic ? "WHERE topic = $1" : ""}
+    ${topic && author ? "WHERE topic = $1 AND articles.author = $2" : ""}
+    ${topic && !author ? "WHERE topic = $1" : ""}
+    ${author && !topic ? "WHERE articles.author = $1" : ""}
     GROUP BY articles.article_id
     ORDER BY ${sort_by} ${order}, title ${order}
 `;
 
-  if (topic) {
-    results = await db.query(baseQuery, [topic]);
+  if (topic || author) {
+    results = await db.query(
+      baseQuery,
+      [topic, author].filter((bind) => bind !== null)
+    );
   } else {
     results = await db.query(baseQuery);
   }

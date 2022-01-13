@@ -27,7 +27,7 @@ exports.getArticle = async (req, res, next) => {
 
 exports.getArticles = async (req, res, next) => {
   try {
-    const { sort_by, order, topic } = req.query;
+    const { sort_by, order, topic, author } = req.query;
     const allowedSorts = [
       "title",
       "topic",
@@ -44,13 +44,18 @@ exports.getArticles = async (req, res, next) => {
       next({ status: 400, msg: "Articles: Invalid sort order parameter" });
     } else {
       let topicExists;
+      let authorExists;
 
       if (topic) {
         topicExists = await selectTopic(topic);
       }
 
-      if (topicExists || !topic) {
-        const articles = await selectArticles(sort_by, order, topic);
+      if (author) {
+        authorExists = await selectUser(author);
+      }
+
+      if ((topicExists || !topic) && (authorExists || !author)) {
+        const articles = await selectArticles(sort_by, order, topic, author);
 
         res.status(200).send({ articles });
       } else {
@@ -105,6 +110,7 @@ exports.postArticleComment = async (req, res, next) => {
   try {
     const { article_id } = req.params;
     const { username, body } = req.body;
+
     if (username && body) {
       const comment = await insertArticleComment(article_id, username, body);
 
@@ -144,7 +150,6 @@ exports.postArticle = async (req, res, next) => {
       next({ status: 400, msg: "Missing required parameters" });
     }
   } catch (err) {
-    console.log(err);
     next(err);
   }
 };
