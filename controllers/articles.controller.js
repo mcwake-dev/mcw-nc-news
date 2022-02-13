@@ -6,6 +6,7 @@ const {
   insertArticleComment,
   deleteArticle,
   insertArticle,
+  mostRecentArticles,
 } = require("../models/articles.model");
 const { selectTopic } = require("../models/topics.model");
 const { selectUser } = require("../models/users.model");
@@ -150,6 +151,17 @@ exports.postArticle = async (req, res, next) => {
       next({ status: 400, msg: "Missing required parameters" });
     }
   } catch (err) {
+    next(err);
+  }
+};
+
+exports.mostRecent = async (req, res, next) => {
+  try {
+    const recentArticles = await mostRecentArticles();
+
+    res.status(200).send({ articles: recentArticles });
+  } catch (err) {
+    console.log(err);
     next(err);
   }
 };

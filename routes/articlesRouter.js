@@ -9,9 +9,11 @@ const {
   postArticle,
   getArticleComments,
   postArticleComment,
+  mostRecent,
 } = require("../controllers/articles.controller");
 
 router.route("/").get(getArticles).post(postArticle);
+router.route("/recent").get(mostRecent);
 router
   .route("/:article_id")
   .get(getArticle)

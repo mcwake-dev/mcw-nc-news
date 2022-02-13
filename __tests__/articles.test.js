@@ -402,3 +402,24 @@ describe("POST /api/articles", () => {
       })
       .expect(404));
 });
+
+describe("GET /api/articles/recent", () => {
+  it("should return a list of 3 most recent articles", () =>
+    request(app)
+      .get("/api/articles/recent")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(3);
+        articles.forEach((article) => {
+          expect(article).toEqual({
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            title: expect.any(String),
+            body: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          });
+        });
+      }));
+});
