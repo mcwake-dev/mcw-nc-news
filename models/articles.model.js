@@ -119,3 +119,11 @@ exports.mostRecentArticles = async () => {
 
   return result.rows;
 };
+
+exports.highestVotedArticles = async () => {
+  const result = await db.query(
+    `SELECT * FROM articles ORDER BY votes DESC LIMIT 3;`
+  );
+
+  return result.rows;
+};

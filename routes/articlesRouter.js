@@ -10,10 +10,12 @@ const {
   getArticleComments,
   postArticleComment,
   mostRecent,
+  highestVoted,
 } = require("../controllers/articles.controller");
 
 router.route("/").get(getArticles).post(postArticle);
 router.route("/recent").get(mostRecent);
+router.route("/highest").get(highestVoted);
 router
   .route("/:article_id")
   .get(getArticle)

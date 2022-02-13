@@ -423,3 +423,25 @@ describe("GET /api/articles/recent", () => {
         });
       }));
 });
+
+describe("GET /api/articles/highest", () => {
+  it("should return a list of 3 highest voted articles", () =>
+    request(app)
+      .get("/api/articles/highest")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(3);
+        expect(articles).toBeSortedBy("votes", { descending: true });
+        articles.forEach((article) => {
+          expect(article).toEqual({
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            title: expect.any(String),
+            body: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+          });
+        });
+      }));
+});

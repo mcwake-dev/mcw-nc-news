@@ -7,6 +7,7 @@ const {
   deleteArticle,
   insertArticle,
   mostRecentArticles,
+  highestVotedArticles,
 } = require("../models/articles.model");
 const { selectTopic } = require("../models/topics.model");
 const { selectUser } = require("../models/users.model");
@@ -160,6 +161,17 @@ exports.mostRecent = async (req, res, next) => {
     const recentArticles = await mostRecentArticles();
 
     res.status(200).send({ articles: recentArticles });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+exports.highestVoted = async (req, res, next) => {
+  try {
+    const highestArticles = await highestVotedArticles();
+
+    res.status(200).send({ articles: highestArticles });
   } catch (err) {
     console.log(err);
     next(err);
