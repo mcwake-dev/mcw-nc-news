@@ -81,3 +81,25 @@ describe("PATCH /api/comments/:comment_id", () => {
       .send({ inc_votes: "plus_one" })
       .expect(400));
 });
+
+describe("GET /api/comments/recent", () => {
+  it("should return a list of the top three most recent comments with the article title included", () =>
+    request(app)
+      .get("/api/comments/recent")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(3);
+        comments.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              body: expect.any(String),
+              votes: expect.any(Number),
+              author: expect.any(String),
+              article_id: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+      }));
+});

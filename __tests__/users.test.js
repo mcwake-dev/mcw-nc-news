@@ -19,8 +19,8 @@ describe("GET /api/users", () => {
       .then(({ body: { users } }) => {
         expect(Array.isArray(users)).toBe(true);
         expect(users.length).toBeGreaterThan(0);
-        users.forEach((topic) => {
-          expect(topic).toEqual(
+        users.forEach((user) => {
+          expect(user).toEqual(
             expect.objectContaining({
               username: expect.any(String),
             })

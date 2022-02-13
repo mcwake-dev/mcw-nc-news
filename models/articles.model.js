@@ -27,7 +27,6 @@ exports.selectArticles = async (
   topic = null,
   author = null
 ) => {
-  console.log(topic, author);
   const baseQuery = `
     SELECT articles.author, 
         articles.title, 

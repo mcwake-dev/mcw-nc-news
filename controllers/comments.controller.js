@@ -1,4 +1,8 @@
-const { deleteComment, updateComment } = require("../models/comments.model");
+const {
+  deleteComment,
+  updateComment,
+  mostRecentComments,
+} = require("../models/comments.model");
 
 exports.deleteComment = async (req, res, next) => {
   try {
@@ -32,6 +36,17 @@ exports.voteOnComment = async (req, res, next) => {
       res.sendStatus(400);
     }
   } catch (err) {
+    next(err);
+  }
+};
+
+exports.topThreeMostRecent = async (req, res, next) => {
+  try {
+    const comments = await mostRecentComments();
+
+    res.status(200).send({ comments });
+  } catch (err) {
+    console.log(err);
     next(err);
   }
 };

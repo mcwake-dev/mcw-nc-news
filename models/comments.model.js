@@ -16,3 +16,13 @@ exports.updateComment = async (comment_id, inc_votes) => {
 
   return result.rows[0];
 };
+
+exports.mostRecentComments = async () => {
+  const result = await db.query(
+    `SELECT comments.article_id, title, comment_id, comments.author, comments.votes, comments.created_at, comments.body 
+     FROM comments INNER JOIN articles ON comments.article_id = articles.article_id
+     ORDER BY comments.created_at DESC LIMIT 3;`
+  );
+
+  return result.rows;
+};
