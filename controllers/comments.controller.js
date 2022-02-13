@@ -2,6 +2,7 @@ const {
   deleteComment,
   updateComment,
   mostRecentComments,
+  highestVotedComments,
 } = require("../models/comments.model");
 
 exports.deleteComment = async (req, res, next) => {
@@ -43,6 +44,17 @@ exports.voteOnComment = async (req, res, next) => {
 exports.topThreeMostRecent = async (req, res, next) => {
   try {
     const comments = await mostRecentComments();
+
+    res.status(200).send({ comments });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+exports.topThreeHighestVoted = async (req, res, next) => {
+  try {
+    const comments = await highestVotedComments();
 
     res.status(200).send({ comments });
   } catch (err) {
