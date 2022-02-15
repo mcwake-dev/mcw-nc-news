@@ -28,3 +28,18 @@ exports.getUser = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.userExists = async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    const user = await selectUser(username);
+
+    if (user) {
+      res.status(200).send({ exists: true });
+    } else {
+      res.status(200).send({ exists: false });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
