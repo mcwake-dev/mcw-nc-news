@@ -1,5 +1,6 @@
 const format = require("pg-format");
 const db = require("../connection");
+const { encryptPassword } = require("../../utils/password");
 
 const seed = async (data, leaveEmpty) => {
   const { articleData, commentData, topicData, userData } = data;
@@ -26,7 +27,9 @@ const seed = async (data, leaveEmpty) => {
     CREATE TABLE users (
       username VARCHAR(50) NOT NULL PRIMARY KEY,
       avatar_url VARCHAR(255) NOT NULL,
-      name VARCHAR(100) NOT NULL
+      firstName VARCHAR(100) NOT NULL,
+      surname VARCHAR(50) NOT NULL,
+      password VARCHAR(100) NOT NULL
     );
   `);
   await db.query(`
@@ -64,15 +67,32 @@ const seed = async (data, leaveEmpty) => {
         topicData.map(({ slug, description }) => [slug, description])
       )
     );
+
+    const users = [];
+
+    for (let user of userData) {
+      users.push({
+        ...user,
+        password: await encryptPassword(user.password),
+      });
+    }
+
     await db.query(
       format(
         `
-          INSERT INTO users (username, avatar_url, name) VALUES %L RETURNING *;
+          INSERT INTO users (
+            username, 
+            firstName, 
+            surname, 
+            password, 
+            avatar_url) VALUES %L RETURNING *;
         `,
-        userData.map(({ username, avatar_url, name }) => [
+        users.map(({ username, firstName, surname, password, avatar_url }) => [
           username,
+          firstName,
+          surname,
+          password,
           avatar_url,
-          name,
         ])
       )
     );
