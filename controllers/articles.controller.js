@@ -11,13 +11,20 @@ const {
 } = require("../models/articles.model");
 const { selectTopic } = require("../models/topics.model");
 const { selectUser } = require("../models/users.model");
+const log = require("../log");
 
 exports.getArticle = async (req, res, next) => {
+  const logger = log.getLogger("Articles Controller > getArticle");
+
   try {
     const { article_id } = req.params;
+
+    logger.log(`Getting article ID: ${article_id}`);
+
     const article = await selectArticle(article_id);
 
     if (article) {
+      logger.log(`Found article ID ${article_id}`);
       res.status(200).send({ article });
     } else {
       next({ status: 404, msg: "Articles: Article not found" });
@@ -28,6 +35,8 @@ exports.getArticle = async (req, res, next) => {
 };
 
 exports.getArticles = async (req, res, next) => {
+  const logger = log.getLogger("Articles Controller > getArticles");
+
   try {
     const { sort_by, order, topic, author } = req.query;
     const allowedSorts = [
