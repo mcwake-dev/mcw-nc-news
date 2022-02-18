@@ -2,21 +2,31 @@ const format = require("pg-format");
 const db = require("../connection");
 const { encryptPassword } = require("../../utils/password");
 
+const deleteAll = async () => {
+  try {
+    await db.query(`
+    DROP TABLE IF EXISTS comments;
+  `);
+    await db.query(`
+    DROP TABLE IF EXISTS articles;
+  `);
+    await db.query(`
+    DROP TABLE IF EXISTS topics;
+  `);
+    await db.query(`
+    DROP TABLE IF EXISTS users;
+  `);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const seed = async (data, leaveEmpty) => {
   const { articleData, commentData, topicData, userData } = data;
   // 1. create tables
-  await db.query(`
-    DROP TABLE IF EXISTS comments;
-  `);
-  await db.query(`
-    DROP TABLE IF EXISTS articles;
-  `);
-  await db.query(`
-    DROP TABLE IF EXISTS topics;
-  `);
-  await db.query(`
-    DROP TABLE IF EXISTS users;
-  `);
+
+  await deleteAll();
+
   await db.query(`
     CREATE TABLE topics (
       slug VARCHAR(50) NOT NULL PRIMARY KEY,
