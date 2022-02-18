@@ -7,7 +7,7 @@ const app = require("../app");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 
-beforeAll(() => seed(testData));
+beforeAll(async () => await seed(testData));
 
 afterAll(() => {
   if (db.end) db.end();
