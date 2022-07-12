@@ -42,7 +42,8 @@
     "loglevel-plugin-prefix": "^0.8.4",
     "nodemon": "^2.0.15",
     "pg": "^8.7.1",
-    "pg-format": "^1.0.4"
+    "pg-format": "^1.0.4",
+    "rss-parser": "^3.12.0"
   },
   "jest": {
     "setupFilesAfterEnv": [
